@@ -1,11 +1,5 @@
-from enum import Enum
 from typing import Optional
-
-
-
-class ItemStatus(Enum):
-    ON_SALE = "ON_SALE"
-    SOLD_OUT = "SOLD_OUT"
+from schemas import ItemCreate, ItemStatus, ItemUpdate
 
 
 class Item:
@@ -59,12 +53,12 @@ def find_by_name(name: str):
             filtered_items.append(item)
     return filtered_items
 
-def create(item_create):
+def create(item_create: ItemCreate):
     new_item = Item(
         len(items) + 1,
-        item_create.get("name"),
-        item_create.get("price"),
-        item_create.get("description"),
+        item_create.name,
+        item_create.price,
+        item_create.description,
         ItemStatus.ON_SALE,
     )
     items.append(new_item)
@@ -80,16 +74,16 @@ def create(item_create):
 #             return item
 #     return None
 
-def update(id: int, item_update):
+def update(id: int, item_update: ItemUpdate):
     left, right = 1, len(items)
     while left <= right:
         mid = (left + right) // 2
         mid_item = items[mid-1]
         if mid_item.id == id:
-            mid_item.name = item_update.get("name", mid_item.name)
-            mid_item.price = item_update.get("price", mid_item.price)
-            mid_item.description = item_update.get("description", mid_item.description)
-            mid_item.status = item_update.get("status", mid_item.status)
+            mid_item.name = mid_item.name if item_update.name is None else item_update.name
+            mid_item.price = mid_item.price if item_update.price is None else item_update.price
+            mid_item.description = mid_item.description if item_update.description is None else item_update.description
+            mid_item.status = mid_item.status if item_update.status is None else item_update.status
             return mid_item
         elif mid_item.id < id:
             left = mid + 1
